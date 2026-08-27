@@ -1,0 +1,23 @@
+# One-time setup file — not read by any pipeline script directly.
+#
+# Creates a new Ollama model tag that's identical to the writer model you
+# already have pulled, except with a much larger context window (16384
+# tokens instead of Ollama's 2048-token default). This is the fix for the
+# writer-model coherence breakdown documented in the project plan, section 5
+# ("Murder at Willowbrook Manor" — invented character names late in Chapter 1,
+# prose dissolving into fragments at the Chapter 7 climax). Root cause: the
+# chapter-writing prompt + a long chapter's worth of output regularly exceeds
+# 2048 tokens, so the model was silently running out of context mid-chapter.
+#
+# One-time setup (run once, from the `files` folder, in a terminal where
+# `ollama` is on PATH):
+#
+#     ollama create natsumura-storytelling-rp-llama-3.1-16k -f Modelfile.writer-16k
+#
+# After that succeeds, local-book-generator.py is already pointed at the new
+# tag (WRITER_MODEL_NAME) — no other setup needed. This does NOT re-download
+# the model or duplicate its weights on disk; Ollama just creates a small new
+# manifest that points at the same underlying weights with a different
+# num_ctx.
+FROM Tohur/natsumura-storytelling-rp-llama-3.1
+PARAMETER num_ctx 16384

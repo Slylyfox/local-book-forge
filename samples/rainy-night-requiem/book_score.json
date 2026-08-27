@@ -1,0 +1,110 @@
+{
+  "title": "Rainy Night Requiem",
+  "genre": "noir private investigator",
+  "scored_version": "edited",
+  "overall_score": 82,
+  "category_scores": {
+    "1. Technical Execution & Readability": 92,
+    "2. Narrative Pacing & Structure": 89,
+    "3. Character Consistency & Voice": 78,
+    "4. Plot Integrity & World Logic": 85,
+    "5. Stylistic & Sensory Polish": 96,
+    "6. Reader Engagement & Cohesion": 53
+  },
+  "coherence": {
+    "passed": true,
+    "degenerate_chapters": [],
+    "rubric_score_before_cap": 82,
+    "score_ceiling_applied": null
+  },
+  "sub_metrics": {
+    "readability_index": {
+      "score": 86,
+      "grade_level": 11.2,
+      "target_band": "7-10"
+    },
+    "sentence_variety": {
+      "score": 100,
+      "stdev_words": 15.0
+    },
+    "filler_filter_words": {
+      "score": 98,
+      "rate_per_1000_words": 3.2
+    },
+    "dialogue_exposition_ratio": {
+      "score": 85,
+      "dialogue_pct": 14.9
+    },
+    "chapter_progression_pacing": {
+      "score": 84
+    },
+    "hook_strength": {
+      "score": 86
+    },
+    "scene_length_balance": {
+      "score": 97,
+      "coefficient_of_variation": 0.14
+    },
+    "dialogue_distinctiveness": {
+      "score": 86
+    },
+    "arc_tracking": {
+      "score": 59,
+      "note": "Protagonist Jack Slade starts investigating Sarah Marie Jenkins' disappearance with a personal connection to her case, but by the end, his emotional state and relationship status remain unclear."
+    },
+    "motivation_agency": {
+      "score": 90
+    },
+    "plot_hole_score": {
+      "score": 89,
+      "continuity_issues": null,
+      "high_severity_issues": null,
+      "source": "llm_residual_check_on_scored_text (edited/repolish \u2014 the raw draft's editorial_review.txt describes defects the editor already fixed, so it is deliberately not used here)"
+    },
+    "subplot_resolution": {
+      "score": 68,
+      "note": "Some beats from the outline receive resolution (e.g., Bubba Fothergill's death), but others are left without payoff, such as Marcus' marriage status, which initially states she was not divorced."
+    },
+    "show_vs_tell_ratio": {
+      "score": 99,
+      "telling_instances": 1,
+      "rate_per_1000_words": 0.05
+    },
+    "sensory_engagement": {
+      "score": 100,
+      "counts": {
+        "visual": 117,
+        "auditory": 91,
+        "tactile": 39,
+        "olfactory": 13
+      }
+    },
+    "cliche_density": {
+      "score": 100,
+      "matches": 0,
+      "rate_per_1000_words": 0.0
+    },
+    "repetitive_starters": {
+      "score": 88,
+      "repeat_rate_pct": 2.9
+    },
+    "thematic_cohesion": {
+      "score": 79,
+      "note": "The novel explores themes of trauma, grief, and the dark side of human nature through Jack Slade's investigation, with a consistent tone."
+    },
+    "emotional_resonance": {
+      "score": 27,
+      "stdev": 4.1
+    }
+  },
+  "length_band": {
+    "genre": "noir private investigator",
+    "overall_score": 82,
+    "total_words": 19056,
+    "band": "Short",
+    "band_detail": "under 20,000 words \u2014 novelette / short novella",
+    "quality_tier": "standard",
+    "length_capped": false,
+    "est_file_size_mb": 0.11
+  }
+}

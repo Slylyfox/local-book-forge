@@ -1,0 +1,12 @@
+# Local Book Forge — Python dependencies
+#
+# There is deliberately no LLM or image-generation SDK here. Both run as local
+# HTTP services (Ollama on :11434, AUTOMATIC1111 on :7860) and are called with
+# plain `requests`, so there is no cloud API dependency and no API key anywhere
+# in this project.
+
+crewai>=0.28            # agent orchestration for the outline and analysis passes
+requests>=2.31          # direct Ollama / AUTOMATIC1111 HTTP calls
+python-docx>=1.1        # .docx manuscript assembly
+Pillow>=10.0            # cover composition and text overlay
+Flask>=3.0              # dashboard server (SSE job streaming)

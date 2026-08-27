@@ -1,0 +1,35 @@
+{
+  "title": "Rainy Night Requiem",
+  "genre": "noir private investigator",
+  "premise": "In the aftermath of his daughter's tragic death, former cop turned PI Jack Slade takes on a case that threatens to reopen old wounds. As he delves deeper into the truth behind a missing persons case from his troubled past, he's forced to confront the darkness that haunts him still.",
+  "characters": [
+    {
+      "name": "Jack Slade",
+      "description": "Ex-cop turned PI with a taste for whiskey and a penchant for getting in over his head"
+    },
+    {
+      "name": "Sarah Jenkins",
+      "description": "Missing persons victim whose trail leads Jack down a rabbit hole of memories and nightmares"
+    }
+  ],
+  "established_facts": [
+    "Sarah Marie Jenkins was 17 years old when she disappeared.",
+    "Starlight Theater is near the city limits where Sarah worked on her last known night.",
+    "Frank Jenkins passed a worn briefcase containing minimal belongings to Jack Slade.",
+    "Sarah Jenkins was married, not divorced",
+    "Lily died in a fire that also killed her children",
+    "Marcus is mentioned as driving an ATV",
+    "Sarah left the black leather jacket on the door hook",
+    "The last time Jack's daughter, Lily, felt alive was while wearing the denim duster",
+    "Sarah Jenkins left her husband, who is referred to as Marcus.",
+    "Kael (no established connection) appears at the end of this chapter, riding a motorcycle with Sarah.",
+    "Bubba Fothergill was tattooed in black leather; Bubba killed his wife; Pogo died on blood-soaked dirt, shot by Sarah Marie's mother's hand"
+  ],
+  "style_terms": [
+    "Red Rock Station: always Red Rock (capital 'R'), no hyphens",
+    {
+      "Term": "Red Rock Station",
+      "Style": "always Red Rock (capital 'R'), no hyphens"
+    }
+  ]
+}

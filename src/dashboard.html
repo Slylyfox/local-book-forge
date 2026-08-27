@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Local Book Forge — Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --panel-border: #262b36;
+    --text: #e6e8ee;
+    --muted: #8a90a2;
+    --accent: #6ea8ff;
+    --green: #4caf76;
+    --red: #e5674a;
+    --amber: #d8a13a;
+    --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 24px;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  /* 6.13 layout reorg: tool panels flow left-to-right, wrapping to a new row
+     as the window narrows, instead of a fixed 340px sidebar. minmax(280px, 1fr)
+     keeps each panel wide enough for its content (e.g. the genre/writer-model
+     button rows) rather than squeezing all 5 into equal fixed columns. */
+  .toolbar-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    align-items: start;
+    margin-bottom: 16px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .panel h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .row:last-child { margin-bottom: 0; }
+  .service-name { font-size: 14px; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #232838;
+    color: var(--muted);
+  }
+  .pill.up { color: var(--green); }
+  .pill.down { color: var(--red); }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: currentColor;
+  }
+  button {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--panel-border);
+    background: #1e222c;
+    color: var(--text);
+    cursor: pointer;
+  }
+  button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0f1115;
+    font-weight: 600;
+  }
+  button.primary:hover:not(:disabled) { color: #0f1115; opacity: 0.9; }
+  button.danger { border-color: var(--red); color: var(--red); }
+  .btn-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  select, input[type=text] {
+    width: 100%;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--panel-border);
+    background: #1e222c;
+    color: var(--text);
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 10px 0 4px;
+  }
+  .terminal {
+    background: #0a0c10;
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    height: 640px;
+    display: flex;
+    flex-direction: column;
+  }
+  .terminal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--panel-border);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .terminal-head .job-name { color: var(--text); font-weight: 600; }
+  .eta-row {
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 14px;
+    border-bottom: 1px solid var(--panel-border);
+    font-size: 11.5px;
+    color: var(--muted);
+    background: #12151d;
+  }
+  .eta-row span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #eta-task { flex: 1; min-width: 0; }
+  #term-output {
+    flex: 1;
+    margin: 0;
+    padding: 14px;
+    overflow-y: auto;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .line-warn { color: var(--amber); }
+  .line-err { color: var(--red); }
+  .line-ok { color: var(--green); }
+  .status-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #232838;
+  }
+  .status-running { color: var(--accent); }
+  .status-finished { color: var(--green); }
+  .status-error { color: var(--red); }
+  .status-stopped { color: var(--muted); }
+  small.hint { color: var(--muted); display: block; margin-top: 8px; font-size: 11.5px; }
+  details summary { cursor: pointer; color: var(--muted); font-size: 12px; margin-top: 4px;}
+  .preview-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .preview-col-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .preview-score-pill {
+    display: inline-flex;
+    font-size: 12px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #232838;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .preview-score-pill.unavailable { color: var(--muted); }
+  /* Word-count pill. Deliberately a different colour from the score pill — it's
+     a fact about the manuscript, not a judgement of it, so the two shouldn't
+     read as the same kind of number. */
+  .preview-score-pill.words { color: #9fb4d8; background: #1c2230; }
+  /* Book Structure custom fields — two columns so min/max sit as pairs. */
+  .structure-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+  }
+  .structure-grid label { margin-bottom: 2px; }
+  .structure-grid input { margin: 0; }
+  /* Row wrapper so the score pill and its action button sit side by side on
+     one line instead of the button pushing the text pane down. */
+  .preview-pill-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    min-height: 26px;
+  }
+  .preview-pill-row .preview-score-pill { margin-bottom: 0; }
+  .preview-action-btn {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .preview-action-btn:hover:not(:disabled) { background: var(--accent); color: #0a0c10; }
+  .preview-action-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    border-color: var(--panel-border);
+    color: var(--muted);
+  }
+  .preview-text {
+    background: #0a0c10;
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 12px;
+    height: 380px;
+    overflow-y: auto;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .preview-text.unavailable { color: var(--muted); font-style: italic; }
+  .chapter-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .chapter-nav-label { font-size: 13px; text-align: center; min-width: 220px; }
+  .cover-picker {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .cover-picker-buttons { display: flex; gap: 6px; }
+  .cover-picker-buttons button {
+    width: 30px;
+    padding: 6px 0;
+    text-align: center;
+  }
+  .cover-picker-buttons button.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0f1115;
+    font-weight: 600;
+  }
+  #preview-cover-img {
+    display: block;
+    max-height: 220px;
+    border-radius: 8px;
+    border: 1px solid var(--panel-border);
+  }
+  #preview-cover-empty { color: var(--muted); font-size: 13px; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip-row button.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0f1115;
+    font-weight: 600;
+  }
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 420px;
+    width: 90%;
+  }
+  .modal-box p { margin: 0 0 16px; font-size: 14px; line-height: 1.4; }
+  .library-list {
+    max-height: 340px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .library-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 10px;
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    background: #1e222c;
+  }
+  .library-row-info { min-width: 0; }
+  .library-row-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .library-row-meta { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .library-row button { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<h1>Local Book Forge — Dashboard</h1>
+<div class="subtitle">Centralized control panel for Ollama, AUTOMATIC1111, and the book generator pipeline. Runs entirely on 127.0.0.1.</div>
+
+<!-- Layout reorg (6.13, 2026-08-13): tool panels now flow as a horizontal
+     toolbar row across the top instead of a narrow 340px sidebar, so the
+     Terminal and Book Preview below get the full page width — Book Preview's
+     side-by-side raw/edited panes in particular were cramped in the old
+     right-column-only space. -->
+<div class="toolbar-row">
+
+    <div class="panel">
+      <h2>Dependencies</h2>
+
+      <div class="btn-row" style="margin-bottom:14px;">
+        <button class="primary" onclick="launchAll()" id="btn-launch-all" style="width:100%;">▶ Launch All Services</button>
+      </div>
+
+      <div class="row">
+        <div class="service-name">Ollama</div>
+        <span id="pill-ollama" class="pill">checking…</span>
+      </div>
+      <div class="btn-row">
+        <button onclick="checkStatus()">Check</button>
+        <button onclick="launchOllama()">Launch</button>
+      </div>
+
+      <div class="row" style="margin-top:16px;">
+        <div class="service-name">AUTOMATIC1111</div>
+        <span id="pill-a1111" class="pill">checking…</span>
+      </div>
+      <div class="btn-row">
+        <button onclick="checkStatus()">Check</button>
+        <button onclick="launchA1111()">Launch</button>
+        <button class="danger" onclick="checkAndKillA1111Conflicts()" id="btn-a1111-kill">Kill conflicting process</button>
+      </div>
+      <small class="hint" id="a1111-conflict-status"></small>
+
+      <div class="row" style="margin-top:16px;">
+        <div class="service-name">GPU VRAM</div>
+        <span id="vram-label" class="pill">checking…</span>
+      </div>
+      <small class="hint">"Launch All" starts Ollama then AUTOMATIC1111 in sequence, streaming each to the terminal panel below. Ollama usually auto-starts as a Windows service already, so this button mainly matters for AUTOMATIC1111. "Kill conflicting process" checks ports 7860/7861/7862 for a leftover AUTOMATIC1111 process (e.g. from a crashed run) and force-kills it after you confirm.</small>
+    </div>
+
+    <div class="panel">
+      <h2>Book Generator</h2>
+      <label>Genre</label>
+      <div class="chip-row" id="genre-buttons"></div>
+
+      <label style="margin-top:14px;">Writer model</label>
+      <div class="chip-row" id="writer-model-buttons"></div>
+      <small class="hint" id="writer-model-hint"></small>
+
+      <label for="batch-count">Batch size</label>
+      <select id="batch-count">
+        <option value="1">1 book</option>
+        <option value="2">2 books</option>
+        <option value="3">3 books</option>
+        <option value="4">4 books</option>
+        <option value="5">5 books</option>
+      </select>
+
+      <label style="display:flex;align-items:center;gap:8px;margin-top:14px;cursor:pointer;">
+        <input type="checkbox" id="chk-full-pipeline" checked style="width:auto;margin:0;">
+        <span>Chain to editor + scorer (full pipeline)</span>
+      </label>
+      <label id="row-suggest-only" style="display:flex;align-items:center;gap:8px;margin-top:6px;padding-left:22px;cursor:pointer;">
+        <input type="checkbox" id="chk-suggest-only" style="width:auto;margin:0;">
+        <span style="color:var(--muted);">Suggest-only edits (skip auto-apply — scorer falls back to the raw draft)</span>
+      </label>
+
+      <div class="btn-row" style="margin-top:14px;">
+        <button class="primary" onclick="runBookgen()" id="btn-run">Run</button>
+        <button class="danger" onclick="stopCurrentJob()" id="btn-stop" disabled>Stop</button>
+      </div>
+      <small class="hint" id="run-hint"></small>
+    </div>
+
+    <!-- Book Structure (2026-08-14). Length used to be hardcoded in
+         local-book-generator.py's constants; this panel drives the same values
+         as CLI flags and persists the choice to dashboard_config.json. -->
+    <div class="panel">
+      <h2>Book Structure</h2>
+      <label>Length preset</label>
+      <div class="btn-row" id="structure-preset-row" style="flex-wrap:wrap;"></div>
+      <small class="hint" id="structure-note" style="margin-top:6px;"></small>
+
+      <div id="structure-custom-fields" style="display:none;margin-top:12px;">
+        <div class="structure-grid">
+          <div>
+            <label for="sf-min_chapters">Chapters (min)</label>
+            <input type="number" id="sf-min_chapters" min="1" max="30">
+          </div>
+          <div>
+            <label for="sf-max_chapters">Chapters (max)</label>
+            <input type="number" id="sf-max_chapters" min="1" max="30">
+          </div>
+          <div>
+            <label for="sf-min_total_words">Total words (min)</label>
+            <input type="number" id="sf-min_total_words" min="1000" step="500">
+          </div>
+          <div>
+            <label for="sf-max_total_words">Total words (max)</label>
+            <input type="number" id="sf-max_total_words" min="1000" step="500">
+          </div>
+          <div>
+            <label for="sf-min_chapter_words">Words/chapter (min)</label>
+            <input type="number" id="sf-min_chapter_words" min="300" step="100">
+          </div>
+          <div>
+            <label for="sf-max_chapter_words">Words/chapter (max)</label>
+            <input type="number" id="sf-max_chapter_words" min="300" step="100">
+          </div>
+        </div>
+        <small class="hint" style="margin-top:6px;">
+          Length is best increased by adding <b>chapters</b>, not by raising words per chapter.
+          On real runs, chapters past ~3,000 words are where repetition collapse starts showing
+          up — a 4,357-word chapter measured 0.357 against the 0.36 floor, while 1,200–2,400-word
+          chapters held 0.51–0.59.
+        </small>
+      </div>
+
+      <div class="btn-row" style="margin-top:12px;">
+        <button onclick="saveBookStructure()" id="btn-save-structure">Save structure</button>
+      </div>
+      <small class="hint" id="structure-status"></small>
+    </div>
+
+    <div class="panel">
+      <h2>Settings</h2>
+      <details>
+        <summary>Paths &amp; config</summary>
+        <label for="cfg-python">Python executable</label>
+        <input type="text" id="cfg-python" placeholder="C:\path\to\venv\Scripts\python.exe">
+
+        <label for="cfg-script">local-book-generator.py path</label>
+        <input type="text" id="cfg-script" placeholder="C:\path\to\local-book-generator.py">
+
+        <label for="cfg-pipeline">pipeline_chain.py path</label>
+        <input type="text" id="cfg-pipeline" placeholder="C:\path\to\pipeline_chain.py">
+
+        <label for="cfg-a1111bat">webui-user.bat path (A1111)</label>
+        <input type="text" id="cfg-a1111bat" placeholder="C:\stable-diffusion-webui\webui-user.bat">
+
+        <label for="cfg-ollama-exe">Ollama executable</label>
+        <input type="text" id="cfg-ollama-exe" placeholder="ollama">
+
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="primary" onclick="saveConfig()">Save Settings</button>
+        </div>
+      </details>
+    </div>
+
+    <div class="panel">
+      <h2>Logs</h2>
+      <label for="log-select">Past runs</label>
+      <select id="log-select">
+        <option value="">Loading…</option>
+      </select>
+      <div class="btn-row" style="margin-top:10px;">
+        <button onclick="refreshLogs()">Refresh</button>
+        <button class="primary" onclick="viewLog()">View</button>
+      </div>
+      <small class="hint">Every launch/run is saved to a log file on disk, even after clicking Clear or closing the browser — useful for pulling up exact output later for troubleshooting.</small>
+    </div>
+
+    <div class="panel">
+      <h2>Maintenance &amp; Diagnostics</h2>
+
+      <div class="btn-row">
+        <button onclick="runSystemTest()">Launch System Test</button>
+      </div>
+      <small class="hint">Read-only diagnostics dump (paths, Ollama models, AUTOMATIC1111, VRAM, disk space, book library size) printed to the terminal panel. Doesn't start, stop, or change anything.</small>
+
+      <label for="kill-task-select" style="margin-top:16px;">Running task (kill)</label>
+      <select id="kill-task-select">
+        <option value="">Click Refresh to check…</option>
+      </select>
+      <div class="btn-row" style="margin-top:8px;">
+        <button onclick="refreshKillTaskList()">Refresh</button>
+        <button class="danger" onclick="killSelectedTask()" id="btn-kill-task" disabled>Kill Selected</button>
+      </div>
+      <small class="hint" id="kill-task-status">Checks for running Ollama, AUTOMATIC1111, and pipeline-script processes — broader than the A1111-only button above.</small>
+
+      <label style="margin-top:16px;">Title history</label>
+      <div class="row" style="margin-top:0;">
+        <div class="service-name" id="th-count">— tracked titles</div>
+        <button class="danger" onclick="clearTitleHistory()">Clear…</button>
+      </div>
+      <small class="hint">Clears the record of past book titles used to catch duplicates (auto-renames a repeat to "Part 2" / "Part 3"). Back up first unless you're sure.</small>
+    </div>
+
+    <div class="panel">
+      <h2>Book Library</h2>
+      <div id="library-list" class="library-list">
+        <div style="color:var(--muted);font-size:13px;">Loading…</div>
+      </div>
+      <small class="hint">Deleting a book zips its whole folder to <code>output_books/deleted_book_backups/</code> first, then removes it from the library — the backup is the only copy left after that.</small>
+    </div>
+
+</div>
+
+<div class="terminal" style="margin-top:16px;">
+  <div class="terminal-head">
+    <div><span class="job-name" id="term-job-name">No job running</span> <span id="term-status" class="status-badge"></span></div>
+    <button onclick="clearTerminal()">Clear</button>
+  </div>
+  <!-- 6.14: ETA/countdown row — hidden until the first [TIMING]-derived
+       "eta" SSE event arrives for the current job; see handleEtaEvent(). -->
+  <div class="eta-row" id="eta-row">
+    <span id="eta-task"></span>
+    <span id="eta-book"></span>
+  </div>
+  <!-- Shown only once appendLine() starts trimming; see TERM_MAX_LINES. -->
+  <div id="term-trimmed-note" class="hint"
+       style="display:none;margin:0 0 6px 0;color:var(--muted);"></div>
+  <pre id="term-output"></pre>
+</div>
+
+<div class="panel" style="margin-top:16px;">
+      <h2>Book Preview</h2>
+      <label for="preview-book-select">Book</label>
+      <select id="preview-book-select">
+        <option value="">Loading…</option>
+      </select>
+
+      <div id="preview-empty" style="color:var(--muted);font-size:13px;padding:24px 0;text-align:center;">
+        No books generated yet — run one above and it'll show up here.
+      </div>
+
+      <div id="preview-body" style="display:none;margin-top:14px;">
+        <div class="cover-picker" id="preview-cover-row">
+          <img id="preview-cover-img" style="display:none;">
+          <div id="preview-cover-empty">No cover art for this book.</div>
+          <div class="cover-picker-buttons">
+            <button onclick="selectPreviewCover(1)" id="btn-cover-1">1</button>
+            <button onclick="selectPreviewCover(2)" id="btn-cover-2">2</button>
+            <button onclick="selectPreviewCover(3)" id="btn-cover-3">3</button>
+          </div>
+        </div>
+        <div class="chapter-nav">
+          <button onclick="prevPreviewChapter()" id="btn-prev-chapter">←</button>
+          <div class="chapter-nav-label" id="preview-chapter-label">Chapter 1</div>
+          <button onclick="nextPreviewChapter()" id="btn-next-chapter">→</button>
+        </div>
+        <div class="preview-cols">
+          <div>
+            <div class="preview-col-label">Raw Draft</div>
+            <div class="preview-pill-row">
+              <div class="preview-score-pill words" id="preview-raw-words"></div>
+              <div class="preview-score-pill" id="preview-raw-score"></div>
+              <button class="preview-action-btn" id="btn-score-raw"
+                      onclick="runStageOnPreviewBook('scorer')"
+                      style="display:none;">Would you like to score?</button>
+            </div>
+            <div class="preview-text" id="preview-raw-text"></div>
+          </div>
+          <div>
+            <div class="preview-col-label">Edited</div>
+            <div class="preview-pill-row">
+              <div class="preview-score-pill words" id="preview-edited-words"></div>
+              <div class="preview-score-pill" id="preview-edited-score"></div>
+              <button class="preview-action-btn" id="btn-edit-book"
+                      onclick="runStageOnPreviewBook('editor')"
+                      style="display:none;">Would you like to edit?</button>
+              <button class="preview-action-btn" id="btn-score-edited"
+                      onclick="runStageOnPreviewBook('scorer')"
+                      style="display:none;">Would you like to score?</button>
+            </div>
+            <div class="preview-text" id="preview-edited-text"></div>
+          </div>
+        </div>
+        <small class="hint">The score only appears on whichever side was actually scored — the scorer only ever runs against one version per book, choosing the edited version if one exists. If a book is missing a stage, the buttons above fill it in: <b>Would you like to edit?</b> runs the editorial pass and writes an <code>edited/</code> version (the raw draft is never changed), and <b>Would you like to score?</b> runs the scorer and writes Finished Product Notes.txt. Both stream into the Terminal below like any other run, and only one can run at a time — they share the GPU.</small>
+      </div>
+    </div>
+
+<script>
+const API = "";
+let currentJobId = null;
+let jobIsRunning = false;
+let bookgenJobId = null;
+let currentEventSource = null;
+
+function pillEl(name) { return document.getElementById("pill-" + name); }
+
+function setPill(name, running, detail) {
+  const el = pillEl(name);
+  el.classList.remove("up", "down");
+  if (running === null) {
+    el.textContent = "checking…";
+  } else if (running) {
+    el.innerHTML = '<span class="dot"></span> running';
+    el.classList.add("up");
+  } else {
+    el.innerHTML = '<span class="dot"></span> not detected';
+    el.classList.add("down");
+    el.title = detail || "";
+  }
+}
+
+async function checkStatus() {
+  setPill("ollama", null);
+  setPill("a1111", null);
+  try {
+    const r = await fetch(API + "/api/status/ollama");
+    const d = await r.json();
+    setPill("ollama", d.running, d.detail);
+  } catch (e) { setPill("ollama", false, String(e)); }
+  try {
+    const r = await fetch(API + "/api/status/a1111");
+    const d = await r.json();
+    setPill("a1111", d.running, d.detail);
+  } catch (e) { setPill("a1111", false, String(e)); }
+  await refreshVram();
+}
+
+async function refreshVram() {
+  const el = document.getElementById("vram-label");
+  el.classList.remove("up", "down");
+  try {
+    const r = await fetch(API + "/api/status/vram");
+    const d = await r.json();
+    if (d.available) {
+      el.textContent = `${d.free_mb.toLocaleString()} / ${d.total_mb.toLocaleString()} MB free`;
+      el.classList.add("up");
+      el.title = "";
+    } else {
+      el.textContent = "unavailable";
+      el.classList.add("down");
+      el.title = d.detail || "";
+    }
+  } catch (e) {
+    el.textContent = "unavailable";
+    el.classList.add("down");
+    el.title = String(e);
+  }
+}
+
+async function checkAndKillA1111Conflicts() {
+  const statusEl = document.getElementById("a1111-conflict-status");
+  const btn = document.getElementById("btn-a1111-kill");
+  btn.disabled = true;
+  statusEl.textContent = "Checking ports 7860/7861/7862 for a conflicting process…";
+  try {
+    const r = await fetch(API + "/api/a1111/conflicts");
+    const d = await r.json();
+    if (!d.supported) {
+      statusEl.textContent = d.detail || "Not supported on this OS.";
+      return;
+    }
+    if (!d.conflicts.length) {
+      statusEl.textContent = "No conflicting process found on ports 7860/7861/7862.";
+      return;
+    }
+    const desc = d.conflicts.map(c => `PID ${c.pid} on port ${c.port}`).join(", ");
+    const plural = d.conflicts.length === 1 ? "this process" : "these processes";
+    if (!confirm(`Found: ${desc}.\n\nForce-kill ${plural}? This can't be undone.`)) {
+      statusEl.textContent = "Cancelled — nothing was killed.";
+      return;
+    }
+    statusEl.textContent = "Killing…";
+    const kr = await fetch(API + "/api/a1111/kill", { method: "POST" });
+    const kd = await kr.json();
+    if (!kd.supported) {
+      statusEl.textContent = kd.detail || "Not supported on this OS.";
+      return;
+    }
+    statusEl.textContent = kd.killed
+      .map(k => `PID ${k.pid} (port ${k.port}): ${k.ok ? "killed" : "failed — " + k.detail}`)
+      .join("; ") || "Nothing to kill.";
+    checkStatus();
+  } catch (e) {
+    statusEl.textContent = "Error: " + String(e);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ---------------------------------------------------------------------
+// 6.9 — Launch System Test: read-only diagnostics, printed straight into
+// the terminal panel (not run as a Job — every check is fast enough to do
+// as one synchronous fetch).
+// ---------------------------------------------------------------------
+async function runSystemTest() {
+  clearTerminal();
+  setJobUI("System Test", "running", false);
+  appendLine("[dashboard] Running system test…", "line-ok");
+  try {
+    const r = await fetch(API + "/api/system-test");
+    const d = await r.json();
+    (d.lines || []).forEach(line => appendLine(line));
+    setJobUI("System Test", "finished", false);
+  } catch (e) {
+    appendLine("[dashboard] System test failed: " + String(e), "line-err");
+    setJobUI("System Test", "error", false);
+  }
+}
+
+// ---------------------------------------------------------------------
+// 6.8 — Kill-task dropdown: broader than 6.7's A1111-only button. Refresh
+// populates the dropdown from live candidates (Ollama / A1111 / pipeline
+// python processes); Kill Selected checks-then-kills with a confirm(),
+// same "are you sure" pattern as 6.7.
+// ---------------------------------------------------------------------
+let killTaskCandidates = [];
+
+async function refreshKillTaskList() {
+  const sel = document.getElementById("kill-task-select");
+  const btn = document.getElementById("btn-kill-task");
+  const statusEl = document.getElementById("kill-task-status");
+  sel.innerHTML = '<option value="">Checking…</option>';
+  btn.disabled = true;
+  try {
+    const r = await fetch(API + "/api/tasks/candidates");
+    const d = await r.json();
+    if (!d.supported) {
+      sel.innerHTML = '<option value="">Not supported on this OS</option>';
+      statusEl.textContent = d.detail || "Not supported on this OS.";
+      return;
+    }
+    killTaskCandidates = d.candidates || [];
+    if (!killTaskCandidates.length) {
+      sel.innerHTML = '<option value="">Nothing running</option>';
+      statusEl.textContent = "No matching Ollama, AUTOMATIC1111, or pipeline-script processes found.";
+      return;
+    }
+    sel.innerHTML = "";
+    killTaskCandidates.forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c.id;
+      opt.textContent = c.label;
+      sel.appendChild(opt);
+    });
+    btn.disabled = false;
+    statusEl.textContent = `${killTaskCandidates.length} running process(es) found.`;
+  } catch (e) {
+    sel.innerHTML = '<option value="">Error checking</option>';
+    statusEl.textContent = "Error: " + String(e);
+  }
+}
+
+async function killSelectedTask() {
+  const sel = document.getElementById("kill-task-select");
+  const btn = document.getElementById("btn-kill-task");
+  const statusEl = document.getElementById("kill-task-status");
+  const chosen = killTaskCandidates.find(c => c.id === sel.value);
+  if (!chosen) return;
+  if (!confirm(`Killing '${chosen.label}', are you sure? This can't be undone.`)) {
+    statusEl.textContent = "Cancelled — nothing was killed.";
+    return;
+  }
+  btn.disabled = true;
+  statusEl.textContent = "Killing…";
+  try {
+    const r = await fetch(API + "/api/tasks/kill", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ pid: chosen.pid }),
+    });
+    const d = await r.json();
+    statusEl.textContent = d.ok ? `Killed: ${chosen.label}` : `Failed to kill ${chosen.label}: ${d.detail}`;
+    checkStatus();
+    refreshKillTaskList();
+  } catch (e) {
+    statusEl.textContent = "Error: " + String(e);
+    btn.disabled = false;
+  }
+}
+
+// ---------------------------------------------------------------------
+// 6.11 — Clear title history, with a 3-way modal (Yes / Yes+backup / No)
+// matching the original spec instead of chaining native confirm() dialogs.
+// ---------------------------------------------------------------------
+async function loadTitleHistoryCount() {
+  const el = document.getElementById("th-count");
+  try {
+    const r = await fetch(API + "/api/title-history/summary");
+    const d = await r.json();
+    el.textContent = `${d.count} tracked title${d.count === 1 ? "" : "s"}`;
+  } catch (e) {
+    el.textContent = "unavailable";
+  }
+}
+
+function clearTitleHistory() {
+  const text = document.getElementById("th-modal-text");
+  const countText = document.getElementById("th-count").textContent;
+  text.textContent = `Clear title history (${countText})? This is what catches duplicate book titles and auto-renames repeats to "Part 2"/"Part 3" — clearing it means a future repeat won't be caught.`;
+  document.getElementById("th-modal-overlay").classList.add("open");
+}
+
+async function titleHistoryModalChoose(choice) {
+  document.getElementById("th-modal-overlay").classList.remove("open");
+  if (choice === "cancel") return;
+  try {
+    const r = await fetch(API + "/api/title-history/clear", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ backup: choice === "backup" }),
+    });
+    const d = await r.json();
+    if (!d.ok) {
+      appendLine("[dashboard] Clear title history failed: " + d.detail, "line-err");
+      return;
+    }
+    let msg = `[dashboard] Title history cleared (${d.cleared_count} title(s) removed).`;
+    if (d.backup_path) msg += ` Backed up to ${d.backup_path}.`;
+    appendLine(msg, "line-ok");
+    loadTitleHistoryCount();
+  } catch (e) {
+    appendLine("[dashboard] Clear title history failed: " + String(e), "line-err");
+  }
+}
+
+let selectedGenre = "random";
+let selectedWriterModel = ""; // "" = script default (Natsumura)
+
+async function loadGenres() {
+  const r = await fetch(API + "/api/genres");
+  const genres = await r.json();
+  const sorted = [...genres].sort((a, b) => a.localeCompare(b));
+  const row = document.getElementById("genre-buttons");
+  row.innerHTML = "";
+  const makeBtn = (value, text) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = text;
+    btn.dataset.genre = value;
+    btn.onclick = () => selectGenre(value);
+    row.appendChild(btn);
+  };
+  sorted.forEach(g => makeBtn(g, g.replace(/\b\w/g, c => c.toUpperCase())));
+  makeBtn("random", "🎲 Random"); // still the default choice, even though it's listed last
+  selectGenre("random");
+}
+
+function selectGenre(value) {
+  selectedGenre = value;
+  document.querySelectorAll("#genre-buttons button").forEach(btn => {
+    btn.classList.toggle("selected", btn.dataset.genre === value);
+  });
+}
+
+async function loadWriterModels() {
+  const r = await fetch(API + "/api/writer-models");
+  const models = await r.json();
+  const row = document.getElementById("writer-model-buttons");
+  row.innerHTML = "";
+  models.forEach(m => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = m.label;
+    btn.dataset.value = m.value;
+    btn.onclick = () => selectWriterModel(m.value);
+    row.appendChild(btn);
+  });
+  selectWriterModel(""); // default
+}
+
+function selectWriterModel(value) {
+  selectedWriterModel = value;
+  document.querySelectorAll("#writer-model-buttons button").forEach(btn => {
+    btn.classList.toggle("selected", btn.dataset.value === value);
+  });
+  const hint = document.getElementById("writer-model-hint");
+  hint.textContent = value
+    ? "A/B test mode: this run's title won't be recorded/checked against past titles, and the model actually used is logged to model_info.json in the book's folder."
+    : "";
+}
+
+async function loadConfig() {
+  const r = await fetch(API + "/api/config");
+  const cfg = await r.json();
+  document.getElementById("cfg-python").value = cfg.python_exe || "";
+  document.getElementById("cfg-script").value = cfg.script_path || "";
+  document.getElementById("cfg-pipeline").value = cfg.pipeline_script_path || "";
+  document.getElementById("cfg-a1111bat").value = cfg.a1111_bat_path || "";
+  document.getElementById("cfg-ollama-exe").value = cfg.ollama_exe || "";
+}
+
+async function saveConfig() {
+  const body = {
+    python_exe: document.getElementById("cfg-python").value.trim(),
+    script_path: document.getElementById("cfg-script").value.trim(),
+    pipeline_script_path: document.getElementById("cfg-pipeline").value.trim(),
+    a1111_bat_path: document.getElementById("cfg-a1111bat").value.trim(),
+    ollama_exe: document.getElementById("cfg-ollama-exe").value.trim(),
+  };
+  await fetch(API + "/api/config", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(body),
+  });
+  appendLine("[dashboard] Settings saved.", "line-ok");
+}
+
+// Maximum log lines kept in the DOM. Added 2026-08-13: the 14:35 Full Pipeline
+// run streamed 79,237 lines into this panel (78,190 of them CrewAI verbose
+// box-drawing frames), and with no cap the tab accumulated ~79k elements and
+// stopped responding. What looked like the scoring agent hanging with 7 seconds
+// left on the ETA was actually the page having died — the pipeline itself ran to
+// completion and wrote the book 90 seconds later.
+//
+// Nothing is lost by capping this: the complete, uncapped log is always written
+// to logs/<timestamp>_<job>.log server-side, and the Logs panel can open it.
+const TERM_MAX_LINES = 2000;
+let termTrimmedCount = 0;
+let termPending = [];
+let termFlushScheduled = false;
+
+// appendLine() buffers instead of writing straight to the DOM, and a single
+// rAF-scheduled flush does the actual insertion. Both halves of that are load-
+// bearing, and the second one only became obvious under test:
+//
+//   * The node cap stops the panel growing without bound. The 14:35 run
+//     streamed 79,237 lines (78,190 of them CrewAI verbose box frames) into an
+//     uncapped panel; the tab accumulated ~79k elements and stopped responding.
+//     What looked like the scorer hanging with 7 seconds left was the PAGE
+//     dying — the pipeline finished and wrote the book 90 seconds later.
+//
+//   * Batching stops layout thrash. Capping alone was NOT enough: the original
+//     code set out.scrollTop = out.scrollHeight on every single line, and
+//     reading scrollHeight forces a synchronous reflow. Thousands of those in a
+//     burst peg the main thread even with only 2,000 nodes present — a replay
+//     of 30,000 lines against the capped-but-unbatched version still froze the
+//     tab hard enough that Playwright timed out after 30s trying to read one
+//     element. Coalescing a burst into one insert and one scroll per frame is
+//     what actually fixes it.
+//
+// Nothing is lost either way: the complete log is written server-side to
+// logs/<timestamp>_<job>.log and the Logs panel can open it.
+function appendLine(text, cls) {
+  let className = cls;
+  if (!className) {
+    if (/^\[WARN\]/.test(text)) className = "line-warn";
+    else if (/error/i.test(text) && /^\[/.test(text)) className = "line-err";
+  }
+  termPending.push([text, className]);
+
+  // A backgrounded tab stops firing requestAnimationFrame, so the buffer itself
+  // needs a ceiling or it becomes the same unbounded-growth bug one level up.
+  // Keep the newest, since that's what will be shown on the next flush.
+  if (termPending.length > TERM_MAX_LINES * 2) {
+    const excess = termPending.length - TERM_MAX_LINES;
+    termPending.splice(0, excess);
+    termTrimmedCount += excess;
+  }
+
+  if (!termFlushScheduled) {
+    termFlushScheduled = true;
+    requestAnimationFrame(flushTerminal);
+  }
+}
+
+function flushTerminal() {
+  termFlushScheduled = false;
+  if (!termPending.length) return;
+  const out = document.getElementById("term-output");
+  if (!out) { termPending = []; return; }
+
+  // Never insert more than the cap in one go — on a huge burst the earlier
+  // lines would be removed again immediately anyway.
+  let batch = termPending;
+  termPending = [];
+  if (batch.length > TERM_MAX_LINES) {
+    termTrimmedCount += batch.length - TERM_MAX_LINES;
+    batch = batch.slice(-TERM_MAX_LINES);
+  }
+
+  const frag = document.createDocumentFragment();
+  for (const [text, className] of batch) {
+    const div = document.createElement("div");
+    if (className) div.className = className;
+    div.textContent = text;
+    frag.appendChild(div);
+  }
+  out.appendChild(frag);
+
+  while (out.childElementCount > TERM_MAX_LINES) {
+    out.removeChild(out.firstElementChild);
+    termTrimmedCount++;
+  }
+
+  if (termTrimmedCount > 0) {
+    const note = document.getElementById("term-trimmed-note");
+    if (note) {
+      note.style.display = "";
+      note.textContent = `Showing the most recent ${TERM_MAX_LINES} lines — ` +
+        `${termTrimmedCount.toLocaleString()} earlier line(s) trimmed from this view. ` +
+        `The full log is saved on disk (see the Logs panel).`;
+    }
+  }
+
+  // One reflow per frame instead of one per line.
+  out.scrollTop = out.scrollHeight;
+}
+
+function clearTerminal() {
+  document.getElementById("term-output").innerHTML = "";
+  // Drop anything still buffered, or queued lines from the previous job would
+  // reappear in the freshly-cleared terminal on the next flush.
+  termPending = [];
+  // Reset the trim counter/notice too, or a cleared terminal keeps claiming
+  // lines were trimmed from output it no longer contains.
+  termTrimmedCount = 0;
+  const note = document.getElementById("term-trimmed-note");
+  if (note) { note.style.display = "none"; note.textContent = ""; }
+}
+
+function setJobUI(name, status, isBookgen) {
+  // Tracked globally so the Book Preview action buttons can grey themselves
+  // out while anything is running — they'd otherwise offer a click the server
+  // rejects with a 409 (one GPU, one stage at a time).
+  jobIsRunning = (status === "running" || status === "starting");
+  if (typeof refreshPreviewStageButtons === "function") refreshPreviewStageButtons();
+  document.getElementById("term-job-name").textContent = name || "No job running";
+  const badge = document.getElementById("term-status");
+  badge.className = "status-badge status-" + (status || "");
+  badge.textContent = status || "";
+  if (isBookgen) {
+    const running = status === "running" || status === "starting";
+    document.getElementById("btn-run").disabled = running;
+    document.getElementById("btn-stop").disabled = !running;
+  }
+}
+
+function streamJob(jobId, jobName, isBookgen) {
+  if (currentEventSource) currentEventSource.close();
+  currentJobId = jobId;
+  if (isBookgen) bookgenJobId = jobId;
+  clearTerminal();
+  resetEta();
+  setJobUI(jobName, "running", isBookgen);
+  const es = new EventSource(API + "/api/jobs/" + jobId + "/stream");
+  currentEventSource = es;
+  es.onmessage = (e) => appendLine(e.data);
+  es.addEventListener("eta", (e) => handleEtaEvent(e.data));
+  es.addEventListener("done", (e) => {
+    setJobUI(jobName, e.data, isBookgen);
+    if (isBookgen) bookgenJobId = null;
+    es.close();
+    resetEta();
+    checkStatus();
+    refreshLogs();
+    loadPreviewBooks(); // pick up any book(s) this job just generated
+    loadLibrary();
+  });
+  es.onerror = () => {
+    // EventSource auto-retries; if job is really gone this just idles quietly.
+  };
+}
+
+// ---------------------------------------------------------------------
+// 6.14 — ETA/countdown timers.
+//
+// dashboard_server.py's Job._maybe_handle_timing() pushes a JSON "eta"
+// event every time it sees a [TIMING] marker line from the running script
+// (see the pipeline scripts' _emit_timing() helpers). Each event carries
+// the CURRENT server-side estimate as of that moment, not a live-updating
+// value — so between events, this just counts the last-known numbers down
+// locally once a second (setInterval) rather than re-querying the server.
+// If an estimate is null (no history for that stage/job-kind yet — e.g.
+// the very first run ever), the countdown is simply omitted for that line
+// until enough runs exist to estimate from.
+// ---------------------------------------------------------------------
+let etaState = { task: null, book: null }; // each: {label, remaining, updatedAt} | null
+let etaTickHandle = null;
+
+function formatMMSS(seconds) {
+  if (seconds == null || !isFinite(seconds) || seconds < 0) return null;
+  const total = Math.round(seconds);
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return m + ":" + String(s).padStart(2, "0");
+}
+
+function resetEta() {
+  etaState = { task: null, book: null };
+  if (etaTickHandle) { clearInterval(etaTickHandle); etaTickHandle = null; }
+  document.getElementById("eta-row").style.display = "none";
+  document.getElementById("eta-task").textContent = "";
+  document.getElementById("eta-book").textContent = "";
+}
+
+function handleEtaEvent(raw) {
+  let data;
+  try { data = JSON.parse(raw); } catch (e) { return; }
+  const now = Date.now();
+  etaState.task = { label: data.task_label, remaining: data.task_remaining, updatedAt: now };
+  etaState.book = { label: data.book_label, remaining: data.book_remaining, updatedAt: now };
+  document.getElementById("eta-row").style.display = "flex";
+  renderEta();
+  if (!etaTickHandle) {
+    etaTickHandle = setInterval(renderEta, 1000);
+  }
+}
+
+function renderEta() {
+  const taskEl = document.getElementById("eta-task");
+  const bookEl = document.getElementById("eta-book");
+  const now = Date.now();
+
+  if (etaState.task) {
+    const elapsed = (now - etaState.task.updatedAt) / 1000;
+    const remaining = etaState.task.remaining == null ? null : Math.max(0, etaState.task.remaining - elapsed);
+    const mmss = formatMMSS(remaining);
+    taskEl.textContent = "Current: " + (etaState.task.label || "working") +
+      (mmss ? " — ~" + mmss + " left" : " — (no history yet)");
+  } else {
+    taskEl.textContent = "";
+  }
+
+  if (etaState.book) {
+    const elapsed = (now - etaState.book.updatedAt) / 1000;
+    const remaining = etaState.book.remaining == null ? null : Math.max(0, etaState.book.remaining - elapsed);
+    const mmss = formatMMSS(remaining);
+    bookEl.textContent = mmss ? ("Book ETA: ~" + mmss + " left") : "Book ETA: (no history yet)";
+  } else {
+    bookEl.textContent = "";
+  }
+}
+
+async function launchAll() {
+  const btn = document.getElementById("btn-launch-all");
+  btn.disabled = true;
+  try {
+    appendLine("[dashboard] Launch All: starting Ollama…", "line-ok");
+    await launchOllama();
+    // Ollama normally auto-starts as a background Windows service, so this
+    // step usually finishes almost instantly (or reports "address already
+    // in use", which just means it's already running — that's fine).
+    // A1111 is a long-running server process, so we don't wait for it to
+    // "finish" — we just give Ollama a moment before switching the terminal
+    // panel over to stream A1111's boot log instead.
+    await new Promise((resolve) => setTimeout(resolve, 2500));
+    appendLine("[dashboard] Launch All: starting AUTOMATIC1111…", "line-ok");
+    await launchA1111();
+  } finally {
+    btn.disabled = false;
+    setTimeout(checkStatus, 4000);
+  }
+}
+
+async function launchOllama() {
+  const r = await fetch(API + "/api/launch/ollama", { method: "POST" });
+  const d = await r.json();
+  if (d.error) { appendLine("[dashboard] " + d.error, "line-err"); return; }
+  streamJob(d.job_id, "Launch Ollama", false);
+}
+
+async function launchA1111() {
+  const r = await fetch(API + "/api/launch/a1111", { method: "POST" });
+  const d = await r.json();
+  if (d.error) { appendLine("[dashboard] " + d.error, "line-err"); return; }
+  streamJob(d.job_id, "Launch AUTOMATIC1111", false);
+}
+
+function updateRunModeUI() {
+  const full = document.getElementById("chk-full-pipeline").checked;
+  const suggestChk = document.getElementById("chk-suggest-only");
+  const suggestRow = document.getElementById("row-suggest-only");
+  const batchCount = parseInt(document.getElementById("batch-count").value, 10);
+  suggestChk.disabled = !full;
+  suggestRow.style.opacity = full ? "1" : "0.4";
+  const hint = document.getElementById("run-hint");
+  const batchPrefix = batchCount > 1
+    ? `Batch of ${batchCount}: books run one after another, same job — Stop halts the whole batch, not just the current book. `
+    : "";
+  if (!full) {
+    hint.textContent = batchPrefix + "Stage A (outline) → B (chapters) → C (cover) → D (manuscript.docx) only — no editor/scorer pass. Expect the full run to take a while — chapters are the slow part.";
+  } else if (suggestChk.checked) {
+    hint.textContent = batchPrefix + "Full pipeline: writer → cover → editor (suggest-only) → scorer. Since suggest-only doesn't write edited/, the scorer falls back to scoring the raw draft.";
+  } else {
+    hint.textContent = batchPrefix + "Full pipeline: writer → cover → editor (auto-apply) → scorer + Finished Product Notes. Expect the full run to take a while — chapters are the slow part.";
+  }
+}
+
+async function runBookgen() {
+  const genre = selectedGenre;
+  const writerModel = selectedWriterModel;
+  const fullPipeline = document.getElementById("chk-full-pipeline").checked;
+  const suggestOnly = document.getElementById("chk-suggest-only").checked;
+  const batchCount = parseInt(document.getElementById("batch-count").value, 10);
+  const modelSuffix = writerModel ? ` [model: ${writerModel}]` : "";
+
+  let endpoint, body, jobLabel;
+  if (batchCount > 1) {
+    endpoint = "/api/run/batch";
+    body = { genre, full_pipeline: fullPipeline, suggest_only: suggestOnly, count: batchCount, writer_model: writerModel };
+    const mode = fullPipeline ? "Full Pipeline" : "Book Generator";
+    jobLabel = `Batch: ${batchCount}x ${mode}: ${genre}` + (fullPipeline && suggestOnly ? " (suggest-only)" : "") + modelSuffix;
+  } else if (fullPipeline) {
+    endpoint = "/api/run/pipeline";
+    body = { genre, suggest_only: suggestOnly, writer_model: writerModel };
+    jobLabel = "Full Pipeline: " + genre + (suggestOnly ? " (suggest-only)" : "") + modelSuffix;
+  } else {
+    endpoint = "/api/run/bookgen";
+    body = { genre, writer_model: writerModel };
+    jobLabel = "Book Generator: " + genre + modelSuffix;
+  }
+
+  const r = await fetch(API + endpoint, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(body),
+  });
+  const d = await r.json();
+  if (d.error) { appendLine("[dashboard] " + d.error, "line-err"); return; }
+  streamJob(d.job_id, jobLabel, true);
+}
+
+async function stopCurrentJob() {
+  if (!bookgenJobId) return;
+  await fetch(API + "/api/jobs/" + bookgenJobId + "/stop", { method: "POST" });
+  appendLine("[dashboard] Stop requested.", "line-warn");
+}
+
+async function refreshLogs() {
+  const sel = document.getElementById("log-select");
+  sel.innerHTML = '<option value="">Loading…</option>';
+  try {
+    const r = await fetch(API + "/api/logs");
+    const logs = await r.json();
+    sel.innerHTML = "";
+    if (logs.length === 0) {
+      sel.innerHTML = '<option value="">No logs yet</option>';
+      return;
+    }
+    logs.forEach(l => {
+      const opt = document.createElement("option");
+      opt.value = l.filename;
+      const when = new Date(l.modified_at * 1000).toLocaleString();
+      opt.textContent = `${l.filename} — ${when}`;
+      sel.appendChild(opt);
+    });
+  } catch (e) {
+    sel.innerHTML = '<option value="">Failed to load</option>';
+  }
+}
+
+async function viewLog() {
+  const sel = document.getElementById("log-select");
+  const filename = sel.value;
+  if (!filename) return;
+  if (currentEventSource) { currentEventSource.close(); currentEventSource = null; }
+  const r = await fetch(API + "/api/logs/" + encodeURIComponent(filename));
+  const d = await r.json();
+  if (d.error) { appendLine("[dashboard] " + d.error, "line-err"); return; }
+  clearTerminal();
+  document.getElementById("term-job-name").textContent = filename + " (saved log)";
+  const badge = document.getElementById("term-status");
+  badge.className = "status-badge";
+  badge.textContent = "archived";
+  d.content.split("\n").forEach(line => { if (line) appendLine(line); });
+}
+
+// =====================================================================
+// Book Preview (item 6.2) — raw vs. edited, chapter-synced side by side.
+// Chapter navigation is synced by design: one shared control moves both
+// panes together so you're always comparing the same chapter, rather than
+// two independently-scrolling panes.
+// =====================================================================
+
+let previewBooks = [];
+let previewChapters = [];
+let previewChapterIndex = 0;
+let previewCurrentSlug = null;
+let previewCoversAvailable = [];
+let previewSelectedCover = null;
+// Set when a preview action button kicks off a stage, so the automatic
+// reload after that job finishes keeps showing the book you acted on
+// instead of snapping to whichever book is newest.
+let previewStickySlug = null;
+
+async function loadPreviewBooks(autoSelectSlug) {
+  const sel = document.getElementById("preview-book-select");
+  try {
+    const r = await fetch(API + "/api/books");
+    previewBooks = await r.json();
+  } catch (e) {
+    previewBooks = [];
+  }
+
+  if (previewBooks.length === 0) {
+    sel.innerHTML = '<option value="">No books yet</option>';
+    document.getElementById("preview-empty").style.display = "block";
+    document.getElementById("preview-body").style.display = "none";
+    return;
+  }
+
+  sel.innerHTML = "";
+  previewBooks.forEach(b => {
+    const opt = document.createElement("option");
+    opt.value = b.slug;
+    const when = new Date(b.modified_at * 1000).toLocaleString();
+    opt.textContent = `${b.title} — ${when}`;
+    sel.appendChild(opt);
+  });
+
+  const preferred = autoSelectSlug || previewStickySlug;
+  const target = (preferred && previewBooks.some(b => b.slug === preferred))
+    ? preferred
+    : previewBooks[0].slug; // list is sorted newest-first by the API
+  sel.value = target;
+  await selectPreviewBook(target);
+}
+
+async function selectPreviewBook(slug) {
+  previewCurrentSlug = slug;
+  document.getElementById("preview-empty").style.display = "none";
+  document.getElementById("preview-body").style.display = "block";
+
+  const r = await fetch(API + "/api/books/" + encodeURIComponent(slug) + "/chapters");
+  const d = await r.json();
+  if (d.error) {
+    appendLine("[dashboard] " + d.error, "line-err");
+    return;
+  }
+  previewChapters = d.chapters || [];
+  previewChapterIndex = 0;
+  previewCoversAvailable = d.covers_available || [];
+  renderCoverPicker();
+  await renderPreviewChapter();
+  await Promise.all([refreshPreviewStageButtons(), refreshPreviewWordCounts()]);
+}
+
+// Word-count pills. Fetched once per BOOK rather than per chapter — this is a
+// whole-manuscript total, so re-fetching it every time you page through chapters
+// would be wasted work and would make the pill flicker.
+async function refreshPreviewWordCounts() {
+  const set = (version, text, muted) => {
+    const el = document.getElementById(`preview-${version}-words`);
+    if (!el) return;
+    el.textContent = text;
+    el.classList.toggle("unavailable", !!muted);
+  };
+  set("raw", "…", true);
+  set("edited", "…", true);
+  if (!previewCurrentSlug) return;
+  let data;
+  try {
+    const r = await fetch(API + "/api/books/" + encodeURIComponent(previewCurrentSlug) + "/wordcount");
+    data = await r.json();
+  } catch (e) {
+    set("raw", "word count unavailable", true);
+    set("edited", "word count unavailable", true);
+    return;
+  }
+  if (data.error) return;
+  for (const version of ["raw", "edited"]) {
+    const d = data[version];
+    if (!d) {
+      set(version, version === "edited" ? "not edited yet" : "no chapters", true);
+    } else {
+      // Band is shown alongside the count because "Short" vs "Standard" is
+      // the quickest way to see what kind of book actually came out.
+      set(version, `${d.words.toLocaleString()} words · ${d.band}`, false);
+    }
+  }
+}
+
+function renderCoverPicker() {
+  const img = document.getElementById("preview-cover-img");
+  const empty = document.getElementById("preview-cover-empty");
+
+  [1, 2, 3].forEach(n => {
+    const btn = document.getElementById(`btn-cover-${n}`);
+    btn.disabled = !previewCoversAvailable.includes(n);
+    btn.classList.remove("selected");
+  });
+
+  if (previewCoversAvailable.length === 0) {
+    img.style.display = "none";
+    empty.style.display = "block";
+    previewSelectedCover = null;
+    return;
+  }
+
+  selectPreviewCover(previewCoversAvailable[0]);
+}
+
+function selectPreviewCover(n) {
+  if (!previewCoversAvailable.includes(n)) return;
+  previewSelectedCover = n;
+  const img = document.getElementById("preview-cover-img");
+  img.src = API + "/api/books/" + encodeURIComponent(previewCurrentSlug) + "/cover/" + n;
+  img.style.display = "block";
+  document.getElementById("preview-cover-empty").style.display = "none";
+  [1, 2, 3].forEach(i => {
+    document.getElementById(`btn-cover-${i}`).classList.toggle("selected", i === n);
+  });
+}
+
+async function renderPreviewChapter() {
+  const label = document.getElementById("preview-chapter-label");
+  if (!previewChapters.length) {
+    label.textContent = "No chapters found";
+    document.getElementById("btn-prev-chapter").disabled = true;
+    document.getElementById("btn-next-chapter").disabled = true;
+    return;
+  }
+
+  const ch = previewChapters[previewChapterIndex];
+  label.textContent = `Chapter ${ch.chapter_number} of ${previewChapters.length} — ${ch.title}`;
+  document.getElementById("btn-prev-chapter").disabled = previewChapterIndex === 0;
+  document.getElementById("btn-next-chapter").disabled = previewChapterIndex === previewChapters.length - 1;
+
+  await Promise.all([
+    loadPreviewPane("raw", ch.chapter_number),
+    loadPreviewPane("edited", ch.chapter_number),
+  ]);
+}
+
+async function loadPreviewPane(version, chapterNumber) {
+  const textEl = document.getElementById(`preview-${version}-text`);
+  const scoreEl = document.getElementById(`preview-${version}-score`);
+  textEl.textContent = "Loading…";
+  textEl.classList.remove("unavailable");
+  scoreEl.textContent = "…";
+  scoreEl.classList.add("unavailable");
+
+  const base = API + "/api/books/" + encodeURIComponent(previewCurrentSlug);
+  const [chapterResp, scoreResp] = await Promise.all([
+    fetch(`${base}/chapter/${chapterNumber}?version=${version}`).then(r => r.json()),
+    fetch(`${base}/score?version=${version}`).then(r => r.json()),
+  ]);
+
+  if (chapterResp.available) {
+    textEl.textContent = chapterResp.text;
+    textEl.classList.remove("unavailable");
+  } else {
+    textEl.textContent = chapterResp.reason || "Not available.";
+    textEl.classList.add("unavailable");
+  }
+
+  // Only one version of a given book is ever actually scored (whichever was
+  // current when the scorer ran) — see dashboard_server.py's /score route.
+  // The badge always shows (never hidden) so the layout stays fixed the way
+  // it's sketched — it just reads "Not scored" on whichever side wasn't the
+  // one the scorer ran against, rather than a fabricated number.
+  if (scoreResp.available) {
+    scoreEl.textContent = `${scoreResp.overall_score}/100`;
+    scoreEl.classList.remove("unavailable");
+  } else {
+    scoreEl.textContent = "Not scored";
+    scoreEl.classList.add("unavailable");
+  }
+}
+
+// ---------------------------------------------------------------------
+// Book Structure panel (2026-08-14).
+//
+// "Random" is a first-class option rather than a checkbox: with it selected the
+// SERVER rolls a preset once per book, so a 3-book batch can produce three
+// different lengths. That's why the roll lives server-side — the page only sends
+// the selection, not a resolved set of numbers.
+// ---------------------------------------------------------------------
+
+let structurePresets = {};
+let structureSelected = "random";
+const STRUCTURE_FIELDS = ["min_chapters", "max_chapters", "min_total_words",
+                          "max_total_words", "min_chapter_words", "max_chapter_words"];
+
+async function loadBookStructure() {
+  let d;
+  try {
+    d = await (await fetch(API + "/api/book-structure")).json();
+  } catch (e) { return; }
+  structurePresets = d.presets || {};
+  structureSelected = d.selected || "random";
+
+  const row = document.getElementById("structure-preset-row");
+  row.innerHTML = "";
+  // Use the server's explicit order (shortest to longest) rather than object key
+  // order — jsonify sorts keys, which listed Full-length before Novelette.
+  const order = d.preset_order || Object.keys(structurePresets);
+  const options = [["random", "🎲 Random"]]
+    .concat(order.filter(k => structurePresets[k]).map(k => [k, structurePresets[k].label]))
+    .concat([["custom", "Custom…"]]);
+  for (const [key, label] of options) {
+    const b = document.createElement("button");
+    b.textContent = label;
+    b.dataset.preset = key;
+    b.onclick = () => selectStructurePreset(key);
+    row.appendChild(b);
+  }
+
+  for (const f of STRUCTURE_FIELDS) {
+    const el = document.getElementById("sf-" + f);
+    if (el && d.custom && d.custom[f] != null) el.value = d.custom[f];
+  }
+  selectStructurePreset(structureSelected, true);
+}
+
+function selectStructurePreset(key, initial) {
+  structureSelected = key;
+  for (const b of document.querySelectorAll("#structure-preset-row button")) {
+    b.classList.toggle("selected", b.dataset.preset === key);
+  }
+  document.getElementById("structure-custom-fields").style.display =
+    key === "custom" ? "" : "none";
+
+  const note = document.getElementById("structure-note");
+  if (key === "random") {
+    // Spelled out because it's the non-obvious part: the roll is per book, so a
+    // batch deliberately comes out uneven.
+    note.textContent = "A length preset is rolled independently for each book, so a batch of 3 " +
+      "can come out as one novelette, one novella and one full-length.";
+  } else if (key === "custom") {
+    note.textContent = "Set your own bounds. Saving checks them for you — a word floor that " +
+      "can't be reached with the chapter budget is rejected rather than failing mid-run.";
+  } else {
+    note.textContent = (structurePresets[key] || {}).note || "";
+  }
+  if (!initial) document.getElementById("structure-status").textContent = "";
+}
+
+async function saveBookStructure() {
+  const body = { preset: structureSelected };
+  if (structureSelected === "custom") {
+    body.custom = {};
+    for (const f of STRUCTURE_FIELDS) {
+      body.custom[f] = document.getElementById("sf-" + f).value;
+    }
+  }
+  const status = document.getElementById("structure-status");
+  status.textContent = "Saving…";
+  try {
+    const r = await fetch(API + "/api/book-structure", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(body),
+    });
+    const d = await r.json();
+    if (!d.ok) {
+      status.textContent = "Not saved — " + (d.detail || "unknown error");
+      status.style.color = "var(--danger)";
+      return;
+    }
+    status.style.color = "";
+    const label = structureSelected === "random" ? "Random (rolled per book)"
+      : structureSelected === "custom" ? "Custom"
+      : (structurePresets[structureSelected] || {}).label || structureSelected;
+    status.textContent = `Saved — new books will use: ${label}`;
+  } catch (e) {
+    status.textContent = "Not saved — " + e;
+    status.style.color = "var(--danger)";
+  }
+}
+
+// ---------------------------------------------------------------------
+// Preview action buttons — run the editor or the scorer on the book that's
+// currently open in the preview, without leaving the dashboard.
+//
+// Visibility is driven by /api/books/<slug>/stages rather than by what the
+// two panes happen to be showing, because the panes are per-CHAPTER and
+// these stages are per-BOOK: a missing chapter_03.txt in edited/ shouldn't
+// offer to re-edit the whole book, and flipping to a chapter that happens
+// to exist on both sides shouldn't make the button vanish.
+// ---------------------------------------------------------------------
+
+async function refreshPreviewStageButtons() {
+  const editBtn = document.getElementById("btn-edit-book");
+  const scoreRawBtn = document.getElementById("btn-score-raw");
+  const scoreEditedBtn = document.getElementById("btn-score-edited");
+  [editBtn, scoreRawBtn, scoreEditedBtn].forEach(b => { b.style.display = "none"; });
+  if (!previewCurrentSlug) return;
+
+  let stages;
+  try {
+    const r = await fetch(API + "/api/books/" + encodeURIComponent(previewCurrentSlug) + "/stages");
+    stages = await r.json();
+  } catch (e) {
+    return;  // buttons stay hidden; the preview itself still works
+  }
+  if (stages.error) return;
+
+  if (!stages.has_edited) editBtn.style.display = "";
+
+  // The scorer picks its own source (edited/ if it exists, else the raw
+  // draft) — it takes no version argument. So the button is shown on the
+  // side that would actually be scored, rather than on both sides implying
+  // a choice that doesn't exist.
+  if (!stages.has_score) {
+    const btn = stages.would_score === "edited" ? scoreEditedBtn : scoreRawBtn;
+    btn.style.display = "";
+  }
+
+  // A run in flight would compete for the same VRAM, so the buttons grey out
+  // rather than letting a click get rejected by the server with a 409.
+  const busy = !!currentJobId && jobIsRunning;
+  [editBtn, scoreRawBtn, scoreEditedBtn].forEach(b => {
+    b.disabled = busy;
+    b.title = busy ? "Another job is running — wait for it to finish or press Stop." : "";
+  });
+}
+
+async function runStageOnPreviewBook(stage) {
+  if (!previewCurrentSlug) return;
+  const slug = previewCurrentSlug;
+  const book = previewBooks.find(b => b.slug === slug);
+  const title = book ? book.title : slug;
+
+  const what = stage === "editor"
+    ? `Run the editorial pass on "${title}"?\n\nThis writes an edited/ version — it does not ` +
+      `change the raw draft. Takes a few minutes per chapter.`
+    : `Score "${title}"?\n\nThis also writes Finished Product Notes.txt.`;
+  if (!confirm(what)) return;
+
+  // Keep the preview on this book when streamJob's done handler reloads the
+  // list — otherwise it would snap back to the newest book and you'd lose
+  // sight of the one you just acted on.
+  previewStickySlug = slug;
+
+  const r = await fetch(API + "/api/run/" + stage, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ slug }),
+  });
+  const d = await r.json();
+  if (d.error) {
+    appendLine("[dashboard] " + d.error, "line-err");
+    alert(d.error);
+    return;
+  }
+  const label = (stage === "editor" ? "Editor: " : "Scorer: ") + title;
+  streamJob(d.job_id, label, true);
+  refreshPreviewStageButtons();  // grey them out for the duration
+}
+
+function prevPreviewChapter() {
+  if (previewChapterIndex > 0) {
+    previewChapterIndex--;
+    renderPreviewChapter();
+  }
+}
+
+function nextPreviewChapter() {
+  if (previewChapterIndex < previewChapters.length - 1) {
+    previewChapterIndex++;
+    renderPreviewChapter();
+  }
+}
+
+// ---------------------------------------------------------------------
+// Item 7 — Book Library management. Reuses the same /api/books endpoint
+// Book Preview already fetches (now returning size_bytes + overall_score
+// too — see dashboard_server.py's list_books()), so there's one source of
+// truth for "what books exist" instead of two separate listings drifting
+// apart. Delete always backs up to a zip first (matches the title-history
+// Clear… pattern in Maintenance & Diagnostics) — there's no "just delete,
+// no backup" path here on purpose.
+// ---------------------------------------------------------------------
+function escapeHtml(s) {
+  const d = document.createElement("div");
+  d.textContent = s == null ? "" : String(s);
+  return d.innerHTML;
+}
+
+function formatBytes(n) {
+  if (n == null) return "";
+  if (n < 1024 * 1024) return Math.max(1, Math.round(n / 1024)) + " KB";
+  return (n / (1024 * 1024)).toFixed(1) + " MB";
+}
+
+async function loadLibrary() {
+  const el = document.getElementById("library-list");
+  let books;
+  try {
+    const r = await fetch(API + "/api/books");
+    books = await r.json();
+  } catch (e) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;">Could not load the library.</div>';
+    return;
+  }
+
+  if (!books.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;">No books yet — run one above and it\'ll show up here.</div>';
+    return;
+  }
+
+  el.innerHTML = "";
+  books.forEach(b => {
+    const row = document.createElement("div");
+    row.className = "library-row";
+    const when = new Date(b.modified_at * 1000).toLocaleDateString();
+    const scoreText = (b.overall_score == null || b.overall_score === undefined) ? "unscored" : `${b.overall_score}/100`;
+    row.innerHTML = `
+      <div class="library-row-info">
+        <div class="library-row-title">${escapeHtml(b.title)}</div>
+        <div class="library-row-meta">${escapeHtml(b.genre || "—")} · ${when} · ${scoreText} · ${formatBytes(b.size_bytes)}</div>
+      </div>
+      <button class="danger">Delete</button>
+    `;
+    row.querySelector("button").addEventListener("click", () => deleteLibraryBook(b.slug, b.title));
+    el.appendChild(row);
+  });
+}
+
+async function deleteLibraryBook(slug, title) {
+  const ok = confirm(
+    `Delete "${title}"?\n\nA backup zip will be saved to output_books/deleted_book_backups/ first, ` +
+    `then the book's folder is removed from the library. This can't be undone from the dashboard.`
+  );
+  if (!ok) return;
+  try {
+    const r = await fetch(API + "/api/library/delete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug }),
+    });
+    const d = await r.json();
+    if (d.error) { alert(d.error); return; }
+    loadLibrary();
+    loadPreviewBooks(); // deleted book shouldn't linger in the preview dropdown either
+  } catch (e) {
+    alert("Delete failed: " + e);
+  }
+}
+
+document.getElementById("preview-book-select").addEventListener("change", (e) => selectPreviewBook(e.target.value));
+
+document.getElementById("chk-full-pipeline").addEventListener("change", updateRunModeUI);
+document.getElementById("chk-suggest-only").addEventListener("change", updateRunModeUI);
+document.getElementById("batch-count").addEventListener("change", updateRunModeUI);
+
+loadGenres();
+loadWriterModels();
+loadConfig();
+checkStatus();
+refreshLogs();
+loadPreviewBooks();
+loadLibrary();
+loadTitleHistoryCount();
+refreshKillTaskList();
+loadBookStructure();
+updateRunModeUI();
+setInterval(checkStatus, 15000);
+</script>
+
+<div class="modal-overlay" id="th-modal-overlay">
+  <div class="modal-box">
+    <p id="th-modal-text"></p>
+    <div class="btn-row">
+      <button class="primary" onclick="titleHistoryModalChoose('backup')">Yes (Back Up &amp; Compress First)</button>
+      <button class="danger" onclick="titleHistoryModalChoose('clear')">Yes</button>
+      <button onclick="titleHistoryModalChoose('cancel')">No</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+QUALITY SCORE — Rainy Night Requiem
+Genre: noir private investigator
+Scored version: edited/ (post-editor)
+Overall score: 82/100
+
+Category scores:
+  1. Technical Execution & Readability: 92/100
+  2. Narrative Pacing & Structure: 89/100
+  3. Character Consistency & Voice: 78/100
+  4. Plot Integrity & World Logic: 85/100
+  5. Stylistic & Sensory Polish: 96/100
+  6. Reader Engagement & Cohesion: 53/100
+
+======================================================================
+1. TECHNICAL EXECUTION & READABILITY
+  Readability index: 86/100 (Flesch-Kincaid grade 11.2, target 7-10)
+  Sentence variety: 100/100 (stdev 15.0 words)
+  Overused/filter words: 98/100 (3.2 per 1000 words)
+  Dialogue-to-exposition ratio: 85/100 (14.9% dialogue)
+
+2. NARRATIVE PACING & STRUCTURE
+  Chapter progression/pacing: 84/100 (avg across chapters)
+  Hook strength: 86/100 (avg across chapters)
+  Scene length balance: 97/100 (chapter-length coefficient of variation 0.14 — approximated from chapter length, no explicit scene-break markers in the text)
+
+3. CHARACTER CONSISTENCY & VOICE
+  Dialogue distinctiveness: 86/100 (avg across chapters)
+  Arc tracking: 59/100 — Protagonist Jack Slade starts investigating Sarah Marie Jenkins' disappearance with a personal connection to her case, but by the end, his emotional state and relationship status remain unclear.
+  Motivation & agency: 90/100 (avg across chapters)
+
+4. PLOT INTEGRITY & WORLD LOGIC
+  Contradiction/plot-hole score: 89/100 (source: llm_residual_check_on_scored_text (edited/repolish — the raw draft's editorial_review.txt describes defects the editor already fixed, so it is deliberately not used here))
+  Subplot resolution: 68/100 — Some beats from the outline receive resolution (e.g., Bubba Fothergill's death), but others are left without payoff, such as Marcus' marriage status, which initially states she was not divorced.
+  Show vs. tell ratio: 99/100 (1 telling instances, 0.05 per 1000 words)
+
+5. STYLISTIC & SENSORY POLISH
+  Sensory engagement: 100/100 (visual=117, auditory=91, tactile=39, olfactory=13)
+  Cliche density: 100/100 (0 matches, 0.0 per 1000 words)
+  Repetitive sentence starters: 88/100 (2.9% of consecutive sentences)
+
+6. READER ENGAGEMENT & COHESION
+  Thematic cohesion: 79/100 — The novel explores themes of trauma, grief, and the dark side of human nature through Jack Slade's investigation, with a consistent tone.
+  Emotional resonance: 27/100 (emotional-intensity stdev 4.1 across chapters — rewards real highs/lows, penalizes a flat tone)
+
+======================================================================
+LENGTH BAND (final job — run after scoring)
+  Band: Short — under 20,000 words — novelette / short novella
+  Scored words: 19,056
+  Quality tier: standard (scored 82/100 — no premium tier, which starts at 85)
+  Estimated file size: 0.11MB

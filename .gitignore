@@ -1,0 +1,45 @@
+# --- Local machine config (contains absolute paths) ---
+config/dashboard_config.json
+dashboard_config.json
+
+# --- Generated output ---
+# Books are large (multi-MB cover PNGs) and are products, not source.
+# One complete book is committed under samples/ as a reference artifact.
+output_books/
+*.docx
+*.epub
+
+# --- Run logs (2-8MB each, mostly model chatter) ---
+logs/
+*.log
+
+# --- Runtime state ---
+title_history.json
+job_timing_history.json
+
+# --- Model weights and fonts (licensed separately, fetched locally) ---
+*.gguf
+*.safetensors
+*.ckpt
+fonts/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+
+# --- Stale local clone of this same repo, kept out of the tree ---
+local-book-forge/

@@ -1,0 +1,22 @@
+{
+  "_comment": "Copy this file to dashboard_config.json and set the paths for your machine. dashboard_config.json is gitignored because it contains absolute local paths.",
+
+  "python_exe": "C:\\path\\to\\python.exe",
+  "script_path": "C:\\path\\to\\repo\\src\\local-book-generator.py",
+  "pipeline_script_path": "C:\\path\\to\\repo\\src\\pipeline_chain.py",
+  "a1111_bat_path": "C:\\path\\to\\stable-diffusion-webui\\webui-user.bat",
+
+  "ollama_exe": "ollama",
+  "ollama_url": "http://localhost:11434",
+  "a1111_url": "http://127.0.0.1:7860",
+
+  "book_structure_preset": "novella",
+  "book_structure_custom": {
+    "min_chapters": 8,
+    "max_chapters": 12,
+    "min_total_words": 20000,
+    "max_total_words": 32000,
+    "min_chapter_words": 1800,
+    "max_chapter_words": 3000
+  }
+}

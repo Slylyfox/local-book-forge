@@ -1,0 +1,26 @@
+# One-time setup file — not read by any pipeline script directly.
+#
+# Same fix as Modelfile.writer-16k, applied to the stock llama3.1 model used
+# by editorial_agent.py (EDITOR_MODEL_NAME) and scoring_agent.py
+# (SCORER_MODEL_NAME). These two read full chapter text as INPUT (up to an
+# ~8,000-word chapter, comfortably over 2048 tokens on its own before any
+# instructions are even added) — same context-overflow risk as the writer,
+# just on the input side instead of the output side. Bumping this too closes
+# the gap so the editor/scorer aren't silently working from a truncated view
+# of your longest chapters.
+#
+# outline generation (OUTLINE_MODEL_NAME in local-book-generator.py) is left
+# on stock llama3.1 — its input/output are both small (short instructions in,
+# a JSON outline out), so it isn't exposed to this issue and doesn't need the
+# larger context window.
+#
+# One-time setup (run once, from the `files` folder, in a terminal where
+# `ollama` is on PATH):
+#
+#     ollama create llama3.1-16k -f Modelfile.llama31-16k
+#
+# After that succeeds, editorial_agent.py and scoring_agent.py are already
+# pointed at the new tag — no other setup needed. Does NOT re-download the
+# model or duplicate weights on disk.
+FROM llama3.1
+PARAMETER num_ctx 16384

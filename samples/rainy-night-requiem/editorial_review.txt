@@ -1,0 +1,240 @@
+EDITORIAL REVIEW — Rainy Night Requiem
+Genre: noir private investigator
+Mode: auto-applied to <book folder>/edited
+Cover option(s) copied to edited/: cover_option_1.png, cover_option_1.jpg, cover_option_2.png, cover_option_2.jpg, cover_option_3.png, cover_option_3.jpg
+Formatted manuscript.docx written to edited/ (built from the edited chapters)
+Total issues found: 36
+By severity: medium=14, high=12, low=10
+By category: continuity=6, grammar=5, pacing=4, style_sheet=4, filter_words=3, structure & continuity|pacing=2, prose style|filter_words=1, grammar & mechanics=1, dialogue mechanics=1, style_sheet|continuity=1, pacing|scene_purpose=1, passive_voice=1, repetition|pacing=1, point-of-view/narrative voice=1, show don't tell=1, parsing=1, pov_voice=1, repetition=1
+
+======================================================================
+Chapter 1: 'Rainy Night Routine' (2316 words) — 7 issue(s)
+
+  [medium/structure & continuity|pacing] "ice needles" used for physical effect; instead, show Jack's eyes constrict or water.
+    Excerpt: "...he felt ice needles prick at the corners of his eyes..."
+    Fix: "His eyes stung, refusing to meet Jenkins' gaze."
+
+  [medium/structure & continuity|pacing] Telling instead of showing emotions; Slade's thoughts could be internal monologue.
+    Excerpt: "...this rain-soaked city...where every lost soul held their own requiem..."
+    Fix: "In this city, each loss carved its own melody into Jack's heart."
+
+  [medium/pacing] Rushed description of time; instead, be more specific about the duration.
+    Excerpt: "...they talked through night as rain fell in sheets..."
+    Fix: "Hours blurred together, each drop merging with the last..."
+
+  [low/prose style|filter_words] Filter word "heavy"; instead, describe the weight explicitly.
+    Excerpt: "...he took both objects in a heavy hand."
+    Fix: "the photograph and locket felt substantial in his grip."
+
+  [high/grammar & mechanics] Tense inconsistency (progressive tense after simple past);
+ fix by changing the sentence to match the surrounding past tenses.
+    Excerpt: "...slipped into his worn armchair once more..."
+    Fix: "he slipped back into the chair, his eyes adjusting to the dim light."
+
+  [high/dialogue mechanics] Dialogue tag placement; "said" is used inconsistently with action beats.
+    Excerpt: "...Slade scribbled down his number..."Get out," he said..."
+    Fix: "'Get out,' he said, motioning towards the door."
+
+  [low/style_sheet] 'acrid' not specified in project style sheet; consider revising to maintain consistency.
+    Excerpt: "...Jack Slade sipped the acrid liquor..."
+    Fix: "bitter" or another word that fits the context.
+
+  Typography (ebook formatting):
+    - Converted 70 straight double-quote(s) to curly quotes.
+    - Converted 62 straight apostrophe(s)/single-quote(s) to curly.
+    - Removed trailing whitespace from one or more lines.
+
+======================================================================
+Chapter 2: 'Case File: Sarah Jenkins' (3290 words) — 7 issue(s)
+
+  [low/grammar] missing article before 'drenched'
+    Excerpt: "Sarah was no ghost; she left footprints he could still smell, on pavement drenched or dry."
+    Fix: insert 'the' before 'pavement'
+
+  [high/style_sheet|continuity] contradiction of established fact
+    Excerpt: "The book premise states Sarah Marie Jenkins was 17 years old when she disappeared, but in this chapter, her age is given as 20 in the missing persons department's summary."
+
+  [medium/pacing|scene_purpose] meandering narrative and unnecessary subplots
+    Excerpt: "There are multiple instances where Jack has internal monologues about his past and relationships, which seem to drag upon the pacing of the chapter. Some scenes, like when he looks at framed photographs on his wall, don't advance the plot or develop characters."
+
+  [medium/continuity]  discrepancy about what was in the briefcase
+    Excerpt: "According to earlier chapters, Frank Jenkins passed a worn briefcase containing minimal belongings to Jack Slade. However, in this chapter, it is stated that Jack found Sarah's driver logs inside the folder."
+
+  [low/filter_words] telling, not showing
+    Excerpt: "He set his teeth against a sigh; they were all just stories to the missing persons department—their way of sweeping away hearts in neat stacks and cold statistics,"
+
+  [low/passive_voice] overuse of passive voice
+    Excerpt: "It was an act of mercy or cruelty, depending on how you saw it—a lifeline between two men who wanted out from this damn world—two hearts in sync with a shared fate's design."
+
+  [high/repetition|pacing] excessive repetition
+    Excerpt: "The repetitive focus on Jack's internal monologues and his obsession with the past slows down the narrative. This repetition could be avoided by alternating between Jack's thoughts and more active scenes."
+
+  Typography (ebook formatting):
+    - Converted 110 straight apostrophe(s)/single-quote(s) to curly.
+    - Removed trailing whitespace from one or more lines.
+
+======================================================================
+Chapter 3: 'Night Watch' (2422 words) — 9 issue(s)
+
+  [high/continuity] Page 2 of the chapter states 'Marcus' hands dancing along her thighs', suggesting they were still together.
+    Excerpt: "Sarah Jenkins was married, not divorced."
+    Fix: Remove this detail or correct it to reflect established fact.
+
+  [high/continuity] Page 9 contradicts earlier descriptions of the storm intensity.
+    Excerpt: "The storm is more intense in this chapter than previously described."
+    Fix: Consolidate and make consistent description of wind, rain, etc.
+
+  [medium/pacing] This flashback scene feels rushed; more room should've been given to its development or the narrative should shift smoother.
+    Excerpt: "He thought back on that last night..."
+    Fix: Add a transition sentence for this non-linear narrative and adjust pacing.
+
+  [medium/point-of-view/narrative voice] Using 'he' implies first-person narration when it switches to third person for the rest of the passage.
+    Excerpt: "He felt a heavy sigh escaping before opening them once more."
+    Fix: Stay consistent with chosen narrative voice throughout.
+
+  [medium/show don't tell] Telling instead of showing Jack's grief and emotional state; emotions are described in exposition rather than being dramatized through character actions or dialogue.
+    Excerpt: "The space seemed empty without her now—...his secrets too."
+    Fix: Replace this with a scene that depicts his emotional response.
+
+  [low/grammar] In this sentence, 'perhaps' is not capitalized properly as it's the start of a new sentence within an introductory clause.
+    Excerpt: "...something Lily might have done after she left Marcus...a token of loyalty perhaps?"
+    Fix: Correct capitalization for introductory clauses.
+
+  [high/continuity] Page 24 states 'he wondered, fingers tracing the imprint: goodbye and farewell—a tattooed man's parting gift?' when Lily is mentioned as if alive.
+    Excerpt: "'Lily was dead already', according to chapter notes."
+    Fix: Correct this mistake or be consistent with established fact.
+
+  [low/grammar] In this comma splice, the sentence lacks a conjunction connecting 'him' and the independent clause.
+    Excerpt: "...for him to see when he read...the woman in black leather..."
+    Fix: Add conjunction or rephrase for clarity.
+
+  [medium/style_sheet] Using a 'they' pronoun instead of maintaining consistency with established fact.
+    Excerpt: "...he thought back on that last night—their laughter in here...(Marcus 'hands dancing along her thighs')..."
+    Fix: Follow established style for pronouns and verb tenses.
+
+  Typography (ebook formatting):
+    - Converted 2 straight double-quote(s) to curly quotes.
+    - Converted 64 straight apostrophe(s)/single-quote(s) to curly.
+    - Removed trailing whitespace from one or more lines.
+
+======================================================================
+Chapter 4: 'Beneath the Surface' (1897 words) — 10 issue(s)
+
+  [high/continuity] Contradicts established facts of Lili's passing and the years since her disappearance.
+    Excerpt: "Sarah Jenkins missing...he looked back at them—the kiss goodbye—a woman on an ATV—
+
+It had been years, but he'd never forgotten that leather—her goodbyes—"
+    Fix: Remove or rephrase to clarify timeline
+
+  [high/continuity] Contradicts established fact that Sarah Jenkins was married.
+    Excerpt: "In Pogo's, a man and a lover in black leather..."
+    Fix: Change 'lover' to an accurate description of her relationship
+
+  [medium/parsing] Confusing sentence structure and fragmented thoughts making it hard to follow.
+    Excerpt: "They laughed again, an abyss between them—Sarah leaving...
+
+In his memory—it was just them—the goodbyes, the kisses, their farewells..."
+    Fix: Revise sentences for better clarity
+
+  [low/pacing] Rushed scenes without much development or plot advancement.
+    Excerpt: "In his memory—it was just them—the goodbyes, the kisses, their farewells..."
+    Fix: Expand on character interactions and scene progression
+
+  [medium/pov_voice] Unusual internal dialogue making it difficult to connect with the protagonist.
+    Excerpt: "He stood, swaying a little from too much amber—"
+    Fix: Replace or rephrase for more coherent thought process
+
+  [low/filter_words] Overuse of filter words and vague descriptions.
+    Excerpt: "The woman having her in Pogo's—a lone figure on wet pavement..."
+    Fix: Use direct description instead
+
+  [high/repetition] Excessive repetition of similar phrases.
+    Excerpt: "...the kiss goodbye—a woman on an ATV—
+
+...her goodbyes—a lone rider in wet leather...
+
+A tattooed man...and she kissed a stranger goodbyetherey..."
+    Fix: Vary language and reduce redundant descriptions
+
+  [medium/grammar] Faulty parallelism.
+    Excerpt: "It was dark in there and cool. Sarah Marie sat at a corner booth, nursing something amber within pitted wood as he entered—"
+    Fix: Revise for grammatically correct sentence
+
+  [high/style_sheet] Repeated deviation from project style sheet.
+    Excerpt: "Red Rock Station: always Red Rock (capital 'R'), no hyphens
+
+However, in this chapter it is written as "under the awning of Red Rock Station"..."
+    Fix: Consistently follow style guidelines
+
+  [medium/style_sheet] Hyphenation error—'leaving' should be hyphenated to match 'lone rider'.
+    Excerpt: "...a lone rider and her leaving..."
+    Fix: Correct hyphenation in this instance
+
+  Typography (ebook formatting):
+    - Converted 92 straight double-quote(s) to curly quotes.
+    - Converted 58 straight apostrophe(s)/single-quote(s) to curly.
+    - Removed trailing whitespace from one or more lines.
+
+======================================================================
+Chapter 5: 'Face-Off' (2240 words) — 3 issue(s)
+
+  [high/pacing] The action is moving too quickly and the chapter's intended beat of a tense confrontation between Jack and Sarah's desperate boyfriend has devolved into chaos. The scene should be tightened to increase tension and focus on core interactions.
+    Excerpt: "He took her arm, hand in blood-slick leather."
+    Fix: Streamline the narrative, removing secondary actions and focusing on crucial information exchange.
+
+  [low/filter_words] Using 'at' here creates a filter word that distances the reader. Direct description can help build tension and immediacy in this intense scene.
+    Excerpt: "Blood dripping from her mouth—tattooed biker at their back—a man who could be Bubba or an imposter."
+    Fix: Instead of using filter words like 'at', focus on direct descriptive language to create a more immersive experience.
+
+  [medium/grammar] The abrupt shift between quotation marks and attribution creates an unclear sentence structure. It seems to be about a past experience that is relevant now, but the language used doesn't make this timeline progression clear.
+    Excerpt: "'I didn't kill you at all,' Jack said—to his daughter—the first time they found Lily—Sarah Jenkins crying in the rain like a ghost—‘Help me.'"
+    Fix: Provide clearer transitions between past and present narratives.
+
+  Typography (ebook formatting):
+    - Converted 149 straight double-quote(s) to curly quotes.
+    - Converted 80 straight apostrophe(s)/single-quote(s) to curly.
+    - Removed trailing whitespace from one or more lines.
+
+======================================================================
+Chapter 6: 'Dead Ends and False Leads' (1975 words) — 0 issue(s)
+
+  No issues found.
+  Typography (ebook formatting):
+    - Converted 122 straight double-quote(s) to curly quotes.
+    - Converted 52 straight apostrophe(s)/single-quote(s) to curly.
+    - Collapsed extra blank lines down to a single blank line between paragraphs.
+    - Removed trailing whitespace from one or more lines.
+
+======================================================================
+Chapter 7: 'The Dark Side' (2372 words) — 0 issue(s)
+
+  No issues found.
+  Typography (ebook formatting):
+    - Converted 3 straight double-quote(s) to curly quotes.
+    - Converted 72 straight apostrophe(s)/single-quote(s) to curly.
+    - Removed trailing whitespace from one or more lines.
+
+======================================================================
+Chapter 8: 'Rainy Night Closure' (1861 words) — 0 issue(s)
+
+  No issues found.
+  Typography (ebook formatting):
+    - Converted 21 straight double-quote(s) to curly quotes.
+    - Converted 52 straight apostrophe(s)/single-quote(s) to curly.
+    - Removed trailing whitespace from one or more lines.
+
+======================================================================
+WHOLE-BOOK NOTES
+
+Pacing (chapters whose length deviated >25% from their outline target):
+  - Chapter 2 ('Case File: Sarah Jenkins'): 3290 words vs. a 2482-word target (over by 32%) — worth a pacing look.
+  - Chapter 4 ('Beneath the Surface'): 1897 words vs. a 2758-word target (under by 31%) — worth a pacing look.
+
+Front/back matter audit:
+  - No 'Copyright' text found in the manuscript — check the copyright page.
+
+Candidate keywords (frequency-based, for listing metadata — review before using):
+  rain, like, night, marcus, back, eyes, leather, marie, against, left, bubba, tattooed, behind, he'd, black
+
+Established facts tracked in style_sheet.json: 11
+Style-sheet terms tracked in style_sheet.json: 2

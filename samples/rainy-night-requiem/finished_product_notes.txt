@@ -1,0 +1,80 @@
+FINISHED PRODUCT NOTES — Rainy Night Requiem
+Scored version: edited/ (post-editor)
+
+Generated listing metadata for the finished book. These are the fields a
+storefront or catalogue entry generally asks for, filled in from the outline,
+the finished text and the score. Everything here is usable as written except
+'Categories', which is left blank — category trees differ between destinations
+and need a human eye.
+
+======================================================================
+LISTING METADATA
+======================================================================
+
+Language: English
+
+Book Title: Rainy Night Requiem
+Subtitle (optional): A forgotten case and a rain-soaked soul
+
+Series: (not applicable — standalone novel)
+
+Edition Number (optional): (leave blank — first edition)
+
+Primary Author or Contributor:
+  First name: Frankie
+  Last name: Marlowe
+Contributors (optional): (none)
+
+Description (plain text is fine; most storefronts cap this around 4000 chars):
+----------------------------------------------------------------------
+In the rain-soaked streets of his past, private investigator Jack Slade is pulled back into a world he thought he'd left behind. The disappearance of Sarah Jenkins, a woman with ties to Slade's troubled history, sets him on a collision course with the darkness that has haunted him for years. As he delves deeper into the mystery, Slade must confront the memories and nightmares that have kept him up at night - and face the truth about his own daughter's tragic death. But in a world where the line between past and present is thin, can Slade uncover the truth before it consumes him whole? The rain pours down like a requiem for the lost souls of Rainy Night Requiem, and Jack Slade is running out of time.
+----------------------------------------------------------------------
+
+Publishing rights: confirm you hold the necessary rights for this specific
+  book before submitting it anywhere.
+
+Sexually explicit content: No (default assumption for general-audience genre fiction)
+Reading age (optional): (leave blank — adult/general-audience fiction, not children's/YA)
+
+Categories (not guessed — pick these manually against whatever category
+  tree the destination uses; this book's genre is 'noir private investigator'):
+  - (pick manually)
+
+Keywords (up to 7, each 50 characters or fewer):
+  1. noir private investigator
+  2. missing persons thriller
+  3. rainy night mystery noir
+  4. dark past suspense fiction
+  5. former cop turned PI
+  6. private investigation murder mystery novel
+  7. crime fiction with complex characters
+
+Length band: Short — under 20,000 words — novelette / short novella
+  (19,056 scored words)
+
+----------------------------------------------------------------------
+AI CONTENT DISCLOSURE — REQUIRED, DO NOT SKIP
+----------------------------------------------------------------------
+This book is machine-generated on both counts:
+  * Text  — written by a local language model
+  * Images — cover art generated with Stable Diffusion
+
+The usual distinction is between AI-GENERATED (created by the tool — disclose)
+and AI-ASSISTED (a human wrote it and the tool helped edit — generally no
+disclosure needed). This book is the first category. Disclose it wherever the
+destination platform asks, and check that platform's current policy before
+submitting — the rules move.
+
+######################################################################
+# INTERNAL RECORD — for your own tracking, not part of the listing
+######################################################################
+# Overall score: 82/100
+#   1. Technical Execution & Readability: 92/100
+#   2. Narrative Pacing & Structure: 89/100
+#   3. Character Consistency & Voice: 78/100
+#   4. Plot Integrity & World Logic: 85/100
+#   5. Stylistic & Sensory Polish: 96/100
+#   6. Reader Engagement & Cohesion: 53/100
+# Scored on: (fill in manually, or check book_score.json's file timestamp)
+# Use this section to track how the book actually performed against its score.
+######################################################################

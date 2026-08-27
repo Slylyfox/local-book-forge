@@ -1,0 +1,68 @@
+{
+  "title": "Rainy Night Requiem",
+  "subtitle": "A forgotten case and a rain-soaked soul",
+  "genre": "noir private investigator",
+  "premise": "In the aftermath of his daughter's tragic death, former cop turned PI Jack Slade takes on a case that threatens to reopen old wounds. As he delves deeper into the truth behind a missing persons case from his troubled past, he's forced to confront the darkness that haunts him still.",
+  "main_characters": [
+    "Jack Slade: Ex-cop turned PI with a taste for whiskey and a penchant for getting in over his head",
+    "Sarah Jenkins: Missing persons victim whose trail leads Jack down a rabbit hole of memories and nightmares"
+  ],
+  "chapters": [
+    {
+      "chapter_number": 1,
+      "title": "Rainy Night Routine",
+      "summary": "Jack Slade sips on cheap whiskey, reliving the rain-soaked nights he spent searching for his own daughter. The phone rings, breaking the spell - a mysterious client seeks Jack's help finding Sarah Jenkins, missing for three weeks.",
+      "target_words": 2390,
+      "emotional_pitch": 15
+    },
+    {
+      "chapter_number": 2,
+      "title": "Case File: Sarah Jenkins",
+      "summary": "Jack pours over the case files, piecing together what little he knows. The missing persons department's lack of progress and the cops' avoidance of him makes Jack wary - something doesn't add up.",
+      "target_words": 2482,
+      "emotional_pitch": 30
+    },
+    {
+      "chapter_number": 3,
+      "title": "Night Watch",
+      "summary": "Jack spends a sleepless night at the Jenkins' apartment, hoping to catch a glimpse of what really went down. But nothing stirs, and he's left with only more questions.",
+      "target_words": 2022,
+      "emotional_pitch": 20
+    },
+    {
+      "chapter_number": 4,
+      "title": "Beneath the Surface",
+      "summary": "As Jack digs deeper into Sarah's life, the walls begin to crumble: her struggles with addiction, a fraught relationship with a new lover. The truth is darker than he imagined.",
+      "target_words": 2758,
+      "emotional_pitch": 80
+    },
+    {
+      "chapter_number": 5,
+      "title": "Face-Off",
+      "summary": "A tense confrontation between Jack and the victim's desperate boyfriend yields more dirt than answers. With each new revelation, Jack's grip on reality falters - his own daughter's ghost haunts him anew.",
+      "target_words": 2712,
+      "emotional_pitch": 95
+    },
+    {
+      "chapter_number": 6,
+      "title": "Dead Ends and False Leads",
+      "summary": "With the PI's time running out, Jack follows a promising new lead: an eyewitness claiming to have seen Sarah last night. As he chases down the tip, the streets grow slick with rain - a deadly storm brews.",
+      "target_words": 2620,
+      "emotional_pitch": 50
+    },
+    {
+      "chapter_number": 7,
+      "title": "The Dark Side",
+      "summary": "As Jack and his client find themselves trapped in an abandoned warehouse, they face the very darkness they've sought to outrun - a figure emerges from the shadows: a man with ties to Jack's past.",
+      "target_words": 2758,
+      "emotional_pitch": 100
+    },
+    {
+      "chapter_number": 8,
+      "title": "Rainy Night Closure",
+      "summary": "The case is finally solved - or so it seems. As the pieces fall into place, Jack stands at a crossroads: confront the darkness head-on and salvage what's left of his soul or lose himself forever in its depths.",
+      "target_words": 2252,
+      "emotional_pitch": 5
+    }
+  ]
+}
